@@ -1,0 +1,59 @@
+# dms-paste
+
+PasteBot-style paste workflow for [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) (Quickshell) on NixOS: clipboard history that pastes directly into the focused window, a denser/cleaner clipboard modal, and a snippets launcher — all declarative, all composable.
+
+Extracted from [SystemNix](https://github.com/LarsArtmann/SystemNix) (2026-10-16) where it was built as a [PasteBot](https://pastebot.app) (macOS) replacement to unblock a full NixOS switch.
+
+## What you get
+
+1. **Snippets launcher plugin** (`:s` trigger) — one `.txt` file per snippet in `~/.local/share/snippets`:
+   - `:s query` — fuzzy-search snippets, Enter pastes into the focused window, Shift+Enter copies without pasting
+   - `:s > name` — save the live clipboard as a new snippet (owner-only perms, 0600)
+   - `:s -name` — list matches, Enter moves one to the desktop trash (never `rm`)
+   - Files >64 KB are listed as inert "too large" hints, never loaded into QML
+2. **Clipboard-history parity settings** — Enter/click on a history entry pastes it directly (DMS synthesizes Ctrl+V over the compositor's `zwp_virtual_keyboard_manager_v1`; works on niri), `maxHistory` raised to 100k, minimal per-row chrome
+3. **Clipboard-modal density patches** (`lib.patchDms`) — no per-row "Text" captions, two preview lines, 880x620 modal, denser rows; build-time grep guards fail the build when upstream QML drifts
+
+## Requirements
+
+- DankMaterialShell's home-manager module imported in the same closure (this flake only assigns into `programs.dank-material-shell.*` and fails eval loudly without it)
+- A compositor supporting the virtual-keyboard protocol (niri)
+- `trash` on `$PATH` (delete mode)
+
+## Usage
+
+```nix
+{
+  inputs.dms-paste.url = "github:LarsArtmann/dms-paste";
+
+  # in your home-manager config:
+  imports = [ inputs.dms-paste.homeModules.dms-paste ];
+  programs.dms-paste.enable = true;
+
+  # optional: patch the clipboard modal (compose with your own overrides)
+  programs.dank-material-shell.package =
+    inputs.dms-paste.lib.patchDms pkgs
+      inputs.dankMaterialShell.packages.${pkgs.system}.default;
+}
+```
+
+All settings the module wires are `mkDefault` — override any of them (`clipboardEnterToPaste`, `clipboardSettings.maxHistory`, …) without fighting merge priority.
+
+Wire the pickers to your compositor's binds:
+
+| Bind (SystemNix) | Action |
+| --- | --- |
+| `Mod+Shift+V` | `dms ipc call clipboard toggle` — clipboard history |
+| `Mod+Shift+C` | `dms ipc call spotlight toggleQuery ":s"` — snippets |
+| `Mod+Ctrl+C` | `dms ipc call spotlight toggleQuery "="` — calculator |
+
+## Known upstream limitation
+
+DMS ≤ 1.6.3 has a broken plugin-state writer (upstream issue #3611, fixed by PR #3733): snippet recency ordering is session-scoped in-memory until the host pins a DMS revision past the fix.
+
+## Development
+
+```bash
+nix flake check   # module-contract + patch-contract (real build of the drift guards) + formatting
+nix fmt
+```
