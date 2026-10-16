@@ -24,7 +24,10 @@ Extracted from [SystemNix](https://github.com/LarsArtmann/SystemNix) (2026-10-16
 
 ```nix
 {
-  inputs.dms-paste.url = "github:LarsArtmann/dms-paste";
+  inputs = {
+    dms-paste.url = "github:LarsArtmann/dms-paste";
+    dankMaterialShell.url = "github:AvengeMedia/DankMaterialShell"; # or your pinned fork/ref
+  };
 
   # in your home-manager config:
   imports = [ inputs.dms-paste.homeModules.dms-paste ];
@@ -37,19 +40,21 @@ Extracted from [SystemNix](https://github.com/LarsArtmann/SystemNix) (2026-10-16
 }
 ```
 
-All settings the module wires are `mkDefault` — override any of them (`clipboardEnterToPaste`, `clipboardSettings.maxHistory`, …) without fighting merge priority.
+All settings the module wires are `mkDefault` — override any of them (`clipboardEnterToPaste`, `clipboardSettings.maxHistory`, …) without fighting merge priority. The one option this repo owns is `programs.dms-paste.snippetsDir` (default `~/.local/share/snippets`).
 
 Wire the pickers to your compositor's binds:
 
-| Bind (SystemNix) | Action |
-| --- | --- |
-| `Mod+Shift+V` | `dms ipc call clipboard toggle` — clipboard history |
-| `Mod+Shift+C` | `dms ipc call spotlight toggleQuery ":s"` — snippets |
-| `Mod+Ctrl+C` | `dms ipc call spotlight toggleQuery "="` — calculator |
+| Bind (SystemNix) | Action                                                |
+| ---------------- | ----------------------------------------------------- |
+| `Mod+Shift+V`    | `dms ipc call clipboard toggle` — clipboard history   |
+| `Mod+Shift+C`    | `dms ipc call spotlight toggleQuery ":s"` — snippets  |
+| `Mod+Ctrl+C`     | `dms ipc call spotlight toggleQuery "="` — calculator |
 
 ## Known upstream limitation
 
-DMS ≤ 1.6.3 has a broken plugin-state writer (upstream issue #3611, fixed by PR #3733): snippet recency ordering is session-scoped in-memory until the host pins a DMS revision past the fix.
+DMS ≤ 1.6.3 has a broken plugin-state writer ([upstream issue #3611](https://github.com/AvengeMedia/DankMaterialShell/issues/3611), fixed by [PR #3733](https://github.com/AvengeMedia/DankMaterialShell/pull/3733); both verified 2026-10-17): snippet recency ordering is session-scoped in-memory until the host pins a DMS revision past the fix.
+
+An honest feature-by-feature status lives in [FEATURES.md](FEATURES.md); direction and raw ideas in [ROADMAP.md](ROADMAP.md).
 
 ## Development
 

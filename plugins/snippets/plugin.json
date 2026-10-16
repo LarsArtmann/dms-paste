@@ -1,13 +1,13 @@
 {
-    "id": "paste-snippets",
-    "name": "Snippets Launcher",
-    "description": "Paste frequently-used multi-line snippets and save clipboard text as new snippets",
-    "version": "1.1.0",
-    "author": "LarsArtmann",
-    "icon": "content_paste",
-    "type": "launcher",
-    "component": "./SnippetsLauncher.qml",
-    "settings": "./SnippetsSettings.qml",
-    "trigger": ":s",
-    "permissions": ["settings_read", "settings_write"]
+  "id": "paste-snippets",
+  "name": "Snippets Launcher",
+  "description": "Paste frequently-used multi-line snippets and save clipboard text as new snippets",
+  "version": "1.1.0",
+  "author": "LarsArtmann",
+  "icon": "content_paste",
+  "type": "launcher",
+  "component": "./SnippetsLauncher.qml",
+  "settings": "./SnippetsSettings.qml",
+  "trigger": ":s",
+  "permissions": ["settings_read", "settings_write"]
 }
