@@ -29,9 +29,9 @@ BuildFlow runs oxfmt over the JS; `.oxfmtrc.json` exists solely to keep it off `
 
 ## Release ritual
 
-1. Bump `plugins/snippets/plugin.json` `version` and cut the matching CHANGELOG section in one commit (numbering continues the SystemNix sequence — see the CHANGELOG header).
-2. Annotated tag `vX.Y.Z` from that section, push it.
-3. GitHub Release with `--verify-tag`; notes = the CHANGELOG section plus the README usage block (a "how to consume" line for first-time visitors).
+1. Bump `plugins/snippets/plugin.json` `version` and cut the matching CHANGELOG section in one commit (numbering continues the SystemNix sequence — see the CHANGELOG header). `nix flake check` must be green on exactly that commit.
+2. Annotated tag `vX.Y.Z` on the release-prep commit (not HEAD — later commits may already have landed), push it.
+3. GitHub Release with `--verify-tag`; notes = the CHANGELOG section plus a "How to consume" block (README usage snippet with the input URL pinned to the new tag, e.g. `github:LarsArtmann/dms-paste/vX.Y.Z`).
 4. Move the SECURITY.md Supported Versions row to the new tag.
 
 ## Current work
