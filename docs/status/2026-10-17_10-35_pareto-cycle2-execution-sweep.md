@@ -1,4 +1,4 @@
-# Status 2026-10-17 10:45 — Pareto Cycle 2 execution sweep
+# Status 2026-10-17 10:35 — Pareto Cycle 2 execution sweep
 
 Scope: full execution of [Cycle 2](../planning/2026-10-17_09-35_pareto-cycle2-master-plan.md) Phases 1–4 machine-executable tasks (ordered by the user: "the WHOLE TODO LIST"). One session, sequential commits, every gate green at each step.
 
@@ -47,7 +47,7 @@ Scope: full execution of [Cycle 2](../planning/2026-10-17_09-35_pareto-cycle2-ma
 
 **Ghost systems?** None: the scratch T6 eval lives in /tmp by design (recipe recorded here; making it a repo check would pin DMS+HM as inputs — deliberately not taken).
 
-**Tests?** `nix flake check` (9 checks incl. all new gates + their self-test legs) green after every phase; CI green on every push; release workflow dry-runs green/red exactly as designed.
+**Tests?** `nix flake check` (8 checks incl. all new gates + their self-test legs) green after every phase; CI green on every push; release workflow dry-runs green/red exactly as designed.
 
 ## f) Next
 
