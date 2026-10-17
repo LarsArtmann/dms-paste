@@ -4,8 +4,13 @@
 // .pragma library keeps QML from leaking document scope into this file.
 .pragma library
 
-// Turn a display name into a snippet filename (sans extension).
-// Falls back to a timestamped slug when nothing name-like remains.
+/**
+ * Turn a display name into a snippet filename (sans extension).
+ * Falls back to a timestamped slug when nothing name-like remains.
+ *
+ * @param {string} name - display name typed in the `:s > name` save flow
+ * @returns {string} filename-safe slug, e.g. "Standup update" -> "standup-update"
+ */
 function slugify(name) {
     let slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
     if (slug.length === 0)
@@ -13,8 +18,16 @@ function slugify(name) {
     return slug;
 }
 
-// Relevance tiers: name prefix 100 > name substring 70 > content
-// substring 40; every query token must also appear in name or content.
+/**
+ * Relevance score for one snippet against a query: name prefix 100 >
+ * name substring 70 > content substring 40; every query token must also
+ * appear in name or content, or the snippet is vetoed (0).
+ *
+ * @param {{name: string, content: string}} snippet - candidate snippet
+ * @param {string} lowerQuery - the query, already lowercased
+ * @param {string[]} tokens - lowercased query tokens for the veto check
+ * @returns {number} 0 when the snippet does not match, else its tier score
+ */
 function score(snippet, lowerQuery, tokens) {
     const lowerName = snippet.name.toLowerCase();
     let score = 0;
@@ -33,10 +46,16 @@ function score(snippet, lowerQuery, tokens) {
     return score;
 }
 
-// Parse the framed scan stream: records separated by \x1e, filename
-// split from content by \x1f, so arbitrary multiline content round-trips
-// safely. Oversized files arrive as "\x01TOO_LARGE\x01<size>" instead of
-// content and are listed as inert hints (content never loaded into QML).
+/**
+ * Parse the framed directory-scan stream: records separated by \x1e,
+ * filename split from content by \x1f, so arbitrary multiline content
+ * round-trips safely. Oversized files arrive as "\x01TOO_LARGE\x01<size>"
+ * instead of content and are listed as inert hints (content never loaded
+ * into QML).
+ *
+ * @param {string} text - raw framed stream from the Quickshell.Io scan
+ * @returns {{fileName: string, name: string, content: string, oversized: boolean, preview: string}[]} parsed records, scan order
+ */
 function parseScanRecords(text) {
     const parsed = [];
     const records = text.split("\x1e");
@@ -78,7 +97,14 @@ function parseScanRecords(text) {
     return parsed;
 }
 
-// Recency-first ordering; alphabetical among the never-used.
+/**
+ * Recency-first ordering comparator; alphabetical among the never-used.
+ *
+ * @param {{fileName: string, name: string}} a - left snippet
+ * @param {{fileName: string, name: string}} b - right snippet
+ * @param {string[]} recentFiles - most-recent-first filenames
+ * @returns {number} comparator result (<0 sorts a first)
+ */
 function recencyCompare(a, b, recentFiles) {
     const ra = recentFiles.indexOf(a.fileName);
     const rb = recentFiles.indexOf(b.fileName);
@@ -87,7 +113,13 @@ function recencyCompare(a, b, recentFiles) {
     return a.name.localeCompare(b.name);
 }
 
-// Most-recent-first, deduped, capped at 10.
+/**
+ * Most-recent-first, deduped recents list, capped at 10.
+ *
+ * @param {string[]} recentFiles - current recents (not mutated)
+ * @param {string} fileName - snippet just used
+ * @returns {string[]} updated recents, `fileName` at the front
+ */
 function updatedRecents(recentFiles, fileName) {
     const next = recentFiles.filter(function (f) { return f !== fileName; });
     next.unshift(fileName);

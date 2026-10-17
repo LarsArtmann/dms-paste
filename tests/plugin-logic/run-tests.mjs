@@ -168,8 +168,7 @@ let fuzz1Bad = 0;
 for (let iter = 0; iter < 500; iter++) {
   const records = [];
   const n = 1 + Math.floor(rnd() * 8);
-  for (let i = 0; i < n; i++)
-    records.push({ fileName: randName(), content: randContent(false) });
+  for (let i = 0; i < n; i++) records.push({ fileName: randName(), content: randContent(false) });
   const stream = records.map((r) => "\x1e" + r.fileName + "\x1f" + r.content).join("");
   const parsed = parseScanRecords(stream);
   if (parsed.length !== records.length) fuzz1Bad++;
@@ -197,8 +196,7 @@ let fuzz2Bad = 0;
 for (let iter = 0; iter < 500; iter++) {
   const records = [];
   const n = 1 + Math.floor(rnd() * 8);
-  for (let i = 0; i < n; i++)
-    records.push({ fileName: randName(), content: randContent(true) });
+  for (let i = 0; i < n; i++) records.push({ fileName: randName(), content: randContent(true) });
   const stream = records.map((r) => "\x1e" + r.fileName + "\x1f" + r.content).join("");
   let parsed;
   try {
@@ -208,9 +206,7 @@ for (let iter = 0; iter < 500; iter++) {
     continue;
   }
   for (const rec of parsed) if (!stream.includes(rec.content)) fuzz2Bad++;
-  const reframed = parsed
-    .map((r) => "\x1e" + r.fileName + "\x1f" + (r.content || "\x01TOO_LARGE\x010"))
-    .join("");
+  const reframed = parsed.map((r) => "\x1e" + r.fileName + "\x1f" + r.content).join("");
   if (JSON.stringify(parseScanRecords(reframed)) !== JSON.stringify(parsed)) fuzz2Bad++;
 }
 eq("fuzz: 500 separator-hostile frames stay total and reparse-stable", fuzz2Bad, 0);
