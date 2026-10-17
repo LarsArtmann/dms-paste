@@ -215,6 +215,19 @@
               echo "FAIL: counts gate accepted a doctored summary (self-test leg broken?)"
               exit 1
             fi
+            # Sentence leg: swap a row to BROKEN and keep the numeric counts
+            # consistent — the numeric gate passes, so only the now-false
+            # "no BROKEN" sentence claim can (and must) fail the gate.
+            lied="$(mktemp -d)/FEATURES.md"
+            awk '
+              !rowdone && /\| PARTIALLY_FUNCTIONAL / { sub(/\| PARTIALLY_FUNCTIONAL /, "| BROKEN "); rowdone = 1 }
+              /^Counts \(/ { sub(/1 PARTIALLY_FUNCTIONAL/, "1 BROKEN") }
+              { print }
+            ' ${self}/FEATURES.md > "$lied"
+            if bash ${./tests/features-counts.sh} "$lied" >/dev/null 2>&1; then
+              echo "FAIL: counts gate accepted a stale no-BROKEN sentence claim (sentence leg broken?)"
+              exit 1
+            fi
             touch "$out"
           '';
 
@@ -232,6 +245,8 @@
             pkgs.runCommand "dms-paste-qml-preflight" { nativeBuildInputs = [ pkgs.qt6.qtdeclarative ]; }
               ''
                 bash ${./tests/qml-preflight.sh} ${./plugins/snippets}
+                # Upstream-shaped fixtures parse-check under the same gate.
+                bash ${./tests/qml-preflight.sh} ${./tests/fixtures}
                 # Self-test: a parse-broken file must fail the same script.
                 broken="$(mktemp -d)"
                 printf 'Item {\n  broken here\n' > "$broken/Broken.qml"

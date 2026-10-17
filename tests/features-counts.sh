@@ -16,6 +16,7 @@ awk '
   }
   /^Counts \([^)]*\): / {
     line = $0
+    raw = $0
     sub(/^Counts \([^)]*\): /, "", line)
     if (match(line, /^[0-9]+/))
       declared_total = substr(line, 1, RLENGTH) + 0
@@ -28,6 +29,18 @@ awk '
   }
   END {
     fail = 0
+    # Sentence assert: every "no STATUS" claim in the summary line must be
+    # true — a doctored table must not hide behind a stale sentence.
+    sent = raw
+    while (match(sent, /(^|[^A-Za-z])[Nn]o [A-Z_]+/)) {
+      claim = substr(sent, RSTART, RLENGTH)
+      sub(/^.*[Nn]o /, "", claim)
+      if (actual[claim] > 0) {
+        printf "counts gate: summary claims no %s but the table has %d\n", claim, actual[claim]
+        fail = 1
+      }
+      sent = substr(sent, RSTART + RLENGTH)
+    }
     if (rows != declared_total) {
       printf "counts gate: table has %d rows but the summary says %d\n", rows, declared_total
       fail = 1
