@@ -196,10 +196,10 @@
           # the derivation also proves the gate bites by running it against
           # a doctored copy that must fail.
           features-counts = pkgs.runCommand "dms-paste-features-counts" { } ''
-            ${./tests/features-counts.sh} ${self}/FEATURES.md
+            bash ${./tests/features-counts.sh} ${self}/FEATURES.md
             doctored="$(mktemp -d)/FEATURES.md"
             sed 's/— 12 FULLY_FUNCTIONAL/— 11 FULLY_FUNCTIONAL/' ${self}/FEATURES.md > "$doctored"
-            if ${./tests/features-counts.sh} "$doctored" >/dev/null 2>&1; then
+            if bash ${./tests/features-counts.sh} "$doctored" >/dev/null 2>&1; then
               echo "FAIL: counts gate accepted a doctored summary (sed leg broken?)"
               exit 1
             fi
