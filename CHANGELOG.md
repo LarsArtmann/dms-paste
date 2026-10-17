@@ -8,6 +8,8 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/); version
 ### Added
 
 - `checks.anchors`: the FEATURES.md Evidence column is mechanically verified — every `path:line` citation (incl. `:line` continuations and `a`-`b` ranges) must resolve to an existing file and a non-blank line, backticked symbol claims must occur within ±5 lines of the cite, and every feature row must carry at least one line anchor (`tests/anchors.sh`). Two doctored-copy self-tests prove the line-bounds and symbol legs both bite; the first run caught rows 12/13/15 citing files without line anchors (now anchored). Doc-anchor rot can no longer ship silently.
+- `checks.features-counts` sentence leg: every "no STATUS" claim in the summary line is now asserted against the table (self-test doctors a row to BROKEN while keeping the numbers consistent, so only the stale sentence can fail the gate — and does).
+- `checks.qml-preflight` now also parse-checks `tests/fixtures/*.qml`; the `ClipboardEntry` fixture was reshaped to mirror upstream v1.6.3 literally (the switch lives inside the caption `text` binding — a bare switch is invalid QML — keeping the perl-leg 16-space brace anchor intact), so the fixture parses clean while still exercising every patch guard.
 
 ### Changed
 
