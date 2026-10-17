@@ -25,7 +25,7 @@ CI runs `nix flake check` on every push/PR (`.github/workflows/check.yml`, x86_6
 
 nixpkgs rides `nixpkgs-unstable` via flake.lock, and with it the qmllint (qt6.qtdeclarative) and nodejs the checks use: a qt major can change qmllint categories/exit codes (CI catches that) — bump flake.lock deliberately, never in passing.
 
-BuildFlow runs oxfmt over the JS; `.oxfmtrc.json` exists solely to keep it off `plugins/snippets/SnippetsLogic.js` (the QML `.pragma library` line is not parseable standard JS — the pragma is deliberate, see hard rules). Known BuildFlow gap (verified 2026-10-17, upstream issue filed): the result cache does not key on `.oxfmtrc.json`, so after editing it run `BUILDFLOW_NO_RESULT_CACHE=1 buildflow -s oxfmt` once or a stale verdict replays.
+BuildFlow runs oxfmt over the JS; `.oxfmtrc.json` exists solely to keep it off `plugins/snippets/SnippetsLogic.js` (the QML `.pragma library` line is not parseable standard JS — the pragma is deliberate, see hard rules). Known BuildFlow gap (verified 2026-10-17, filed upstream as LarsArtmann/BuildFlow#68): the result cache does not key on `.oxfmtrc.json`, so after editing it run `BUILDFLOW_NO_RESULT_CACHE=1 buildflow -s oxfmt` once or a stale verdict replays.
 
 ## Release ritual
 
