@@ -69,4 +69,4 @@ node tests/plugin-logic/run-tests.mjs plugins/snippets/SnippetsLogic.js  # plugi
 tests/qml-preflight.sh plugins/snippets                                        # QML parse preflight
 ```
 
-CI runs `nix flake check` on every push and pull request (SHA-pinned actions, superseded runs cancelled, runner pinned to `ubuntu-24.04`).
+CI runs `nix flake check` on every push and pull request (SHA-pinned actions, superseded runs cancelled, runner pinned to `ubuntu-24.04`); Dependabot opens weekly grouped PRs bumping those pins.

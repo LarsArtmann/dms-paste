@@ -21,7 +21,16 @@ PasteBot-style paste workflow for DankMaterialShell (Quickshell): snippets launc
 
 ## Verification
 
-CI runs `nix flake check` on every push/PR (`.github/workflows/check.yml`, x86_64-linux; actions pinned to commit SHAs, superseded runs cancelled, runner pinned to `ubuntu-24.04` ahead of the ubuntu-latest → Ubuntu 26.04 rollout). Locally the same: `nix flake check` — `module-contract` (eval), `patch-contract` (real build exercising every drift guard), `formatting` (treefmt/nix), `dprint` (json/yaml/markdown/dockerfile, hermetic via store-path plugins), `features-counts`, `plugin-logic` (node), `qml-preflight` (qmllint parse gate). Nix files: this repo's own treefmt (`nix fmt`), never ad-hoc nixfmt/statix/alejandra. JSON/YAML/Markdown/Dockerfile: `dprint` (pinned in the devShell — `nix develop` — and in the check; plugin hashes live in `flake.nix` `dprintCheck`, add one there when bumping a plugin in `dprint.json`). `dprint.json` is auto-generated config — don't hand-curate it.
+CI runs `nix flake check` on every push/PR (`.github/workflows/check.yml`, x86_64-linux; actions pinned to commit SHAs, superseded runs cancelled, runner pinned to `ubuntu-24.04` ahead of the ubuntu-latest → Ubuntu 26.04 rollout). Dependabot opens weekly grouped PRs bumping those SHAs — verify a new SHA against the upstream tag object (`gh api /repos/<owner>/<repo>/git/ref/tags/<tag>`) before merging. Locally the same: `nix flake check` — `module-contract` (eval), `patch-contract` (real build exercising every drift guard), `formatting` (treefmt/nix), `dprint` (json/yaml/markdown/dockerfile, hermetic via store-path plugins), `features-counts`, `plugin-logic` (node), `qml-preflight` (qmllint parse gate). Nix files: this repo's own treefmt (`nix fmt`), never ad-hoc nixfmt/statix/alejandra. JSON/YAML/Markdown/Dockerfile: `dprint` (pinned in the devShell — `nix develop` — and in the check; plugin hashes live in `flake.nix` `dprintCheck`, add one there when bumping a plugin in `dprint.json`). `dprint.json` is auto-generated config — don't hand-curate it.
+
+nixpkgs rides `nixpkgs-unstable` via flake.lock, and with it the qmllint (qt6.qtdeclarative) and nodejs the checks use: a qt major can change qmllint categories/exit codes (CI catches that) — bump flake.lock deliberately, never in passing.
+
+## Release ritual
+
+1. Bump `plugins/snippets/plugin.json` `version` and cut the matching CHANGELOG section in one commit (numbering continues the SystemNix sequence — see the CHANGELOG header).
+2. Annotated tag `vX.Y.Z` from that section, push it.
+3. GitHub Release with `--verify-tag`; notes = the CHANGELOG section plus the README usage block (a "how to consume" line for first-time visitors).
+4. Move the SECURITY.md Supported Versions row to the new tag.
 
 ## Current work
 

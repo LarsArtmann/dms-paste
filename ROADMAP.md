@@ -35,9 +35,10 @@ PasteBot-parity is the floor, not the ceiling. Ideas in rough fidelity order:
 
 - A QML-level harness that loads the plugin in a real Quickshell context
   (beyond the current node + parse-level checks) — needs fixture shell
-  plumbing that does not exist yet. Stepping stone: generate/import
-  Quickshell qmltypes so qmllint can do real type checking instead of
-  parse-only.
+  plumbing that does not exist yet; first target: the thin `trackRecent`
+  wrapper (delegates to tested logic, but the wiring itself is untested).
+  Stepping stone: generate/import Quickshell qmltypes so qmllint can do real
+  type checking instead of parse-only.
 - Cross-arch (`aarch64-linux`) check runs in CI — deferred while every
   check is an eval/text contract; revisit the moment an
   architecture-dependent check appears.
@@ -53,6 +54,9 @@ PasteBot-parity is the floor, not the ceiling. Ideas in rough fidelity order:
 
 - Should this repo ever carry more DMS plugins, or is it strictly the
   paste workflow (name says paste)?
+- Adopt BuildFlow orchestration (pre-commit/format gates) for this repo, or
+  keep the daemon-only auto-commit flow? (`.gitignore` already carries
+  buildflow-managed markers.)
 
 ## Non-goals
 

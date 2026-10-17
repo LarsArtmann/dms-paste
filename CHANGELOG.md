@@ -14,9 +14,14 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/); version
 - `checks.features-counts`: the FEATURES.md summary counts are re-derived from the table, and the gate proves it bites by rejecting a doctored copy.
 - `checks.qml-preflight`: qmllint parse gate over every plugin `.qml` (type resolution disabled — Quickshell types only resolve in a live shell), with a self-test leg proving a parse-broken file fails the build. A QML syntax error can no longer ship.
 - `docs/status/README.md` index of status reports.
+- Dependabot for the GitHub Actions dependency graph (weekly, grouped update PRs; `.github/dependabot.yml`) — first grouped PR bumped `actions/checkout` to the pinned v7.0.1.
+- Release ritual documented in AGENTS.md (version bump, annotated tag, GitHub Release cut from the CHANGELOG section with a "how to consume" line, SECURITY.md supported-versions row).
+- Scores-history table in `docs/status/README.md` (docs-health Accuracy/Fitness datapoints) plus the add-your-own-row index convention.
 
 ### Changed
 
+- SECURITY.md: the "no dedicated dependency/security scanner" claim corrected — Dependabot covers the Actions dependency graph; the nix surface (nixpkgs-unstable via flake.lock) stays scanner-less on deliberate bumps.
+- Docs-health AUDIT #3 (as-found Accuracy 8.25 / Fitness 9.25): every status/planning snapshot fully annotated (each item resolved or routed inline) and moved to `docs/status/archived/` + `docs/planning/archived/` with manifests; six never-routed items from the 06-05 report harvested into TODO_LIST/ROADMAP.
 - README: the `zwp_virtual_keyboard_manager_v1` and niri claims are now verified against DMS and niri source (2026-10-17) with links and a re-verify cadence note; CI badge added; Development section documents the devShell and the full check suite.
 - Tagged `v1.1.0` (2026-10-17) on the first CI-verified commit; published the GitHub Release for [`v1.1.0`](https://github.com/LarsArtmann/dms-paste/releases/tag/v1.1.0) (notes from this changelog).
 - CI workflow hardened: actions pinned to commit SHAs (`actions/checkout` v7.0.1, `nix-installer-action` v23 — both verified against the upstream tag objects), cancel-in-progress concurrency group, runner pinned to `ubuntu-24.04` ahead of the announced ubuntu-latest → Ubuntu 26.04 migration (2026-10-19).
