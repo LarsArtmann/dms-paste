@@ -3,6 +3,8 @@
 Ubiquitous-language glossary for dms-paste. Terms are ordered by where you
 meet them: plugin behavior first, then module/patcher vocabulary.
 
+Decision 2026-10-17: kept as the single home of domain vocabulary (D3).
+
 | Term                               | Definition                                                                                                                                                                                                                                    | Where used                                                     |
 | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | Snippet                            | One `.txt` file in the snippets directory; filename (minus `.txt`) is the name, file content is the payload.                                                                                                                                  | `plugins/snippets/SnippetsLauncher.qml`, README                |

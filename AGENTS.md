@@ -13,9 +13,11 @@ PasteBot-style paste workflow for DankMaterialShell (Quickshell): snippets launc
 ## Layout
 
 - `plugins/snippets/` — the DMS launcher plugin (contract: `getItems` / `executeItem` / `getPasteArgs`; storage: one `.txt` per snippet; `\x1e`/`\x1f`-framed async scan via `Quickshell.Io`)
+- `plugins/snippets/SnippetsLogic.js` — the plugin's pure logic (scoring/slugify/framing/recency), imported by the QML and executed under node by `checks.plugin-logic`; keep it Qt-free and argument-pure
 - `module.nix` — HM module, parameterized over `pluginSrc` (imported via `homeModules.dms-paste`)
 - `patch.nix` — `lib.patchDms pkgs dms` (composable `overrideAttrs`)
 - `tests/fixtures/` — upstream-shaped Clipboard QML the `patch-contract` check builds against
+- `tests/plugin-logic/`, `tests/features-counts.sh` — the node harness and the FEATURES counts gate (both wired as flake checks)
 
 ## Verification
 

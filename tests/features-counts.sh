@@ -6,6 +6,7 @@ set -euo pipefail
 file=${1:?usage: features-counts.sh FEATURES.md}
 
 awk '
+  BEGIN { FS = "|" }
   /^\|[[:space:]]*[0-9]+[[:space:]]*\|/ {
     status = $4
     gsub(/^[[:space:]]+|[[:space:]]+$/, "", status)

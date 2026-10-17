@@ -198,7 +198,7 @@
           features-counts = pkgs.runCommand "dms-paste-features-counts" { } ''
             ${./tests/features-counts.sh} ${self}/FEATURES.md
             doctored="$(mktemp -d)/FEATURES.md"
-            sed 's/— 10 FULLY_FUNCTIONAL/— 9 FULLY_FUNCTIONAL/' ${self}/FEATURES.md > "$doctored"
+            sed 's/— 12 FULLY_FUNCTIONAL/— 11 FULLY_FUNCTIONAL/' ${self}/FEATURES.md > "$doctored"
             if ${./tests/features-counts.sh} "$doctored" >/dev/null 2>&1; then
               echo "FAIL: counts gate accepted a doctored summary (sed leg broken?)"
               exit 1
@@ -209,12 +209,10 @@
           # Node harness over the plugin's pure logic (the exact
           # SnippetsLogic.js the QML launcher imports): scoring tiers,
           # slugify, the framed scan round-trip incl. TOO_LARGE, recency.
-          plugin-logic = pkgs.runCommand "dms-paste-plugin-logic"
-            { nativeBuildInputs = [ pkgs.nodejs ]; }
-            ''
-              node ${./tests/plugin-logic/run-tests.mjs} ${./plugins/snippets/SnippetsLogic.js}
-              touch "$out"
-            '';
+          plugin-logic = pkgs.runCommand "dms-paste-plugin-logic" { nativeBuildInputs = [ pkgs.nodejs ]; } ''
+            node ${./tests/plugin-logic/run-tests.mjs} ${./plugins/snippets/SnippetsLogic.js}
+            touch "$out"
+          '';
         }
       );
     };
