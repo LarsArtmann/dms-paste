@@ -6,7 +6,9 @@ Point-in-time snapshots of project state. The living sources are [TODO_LIST.md](
 
 ## Index (unarchived)
 
-_None — every snapshot to date is fully resolved; see [archived/](archived/)._
+| Date       | Report                                                                                                      | Occasion                                                                               |
+| ---------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 2026-10-17 | [Docs-health audit #3 — annotation + archive sweep](2026-10-17_09-29_docs-health-annotate-archive-sweep.md) | 198 inline verdicts; all 4 snapshots archived; dependabot documented; docs truth-fixed |
 
 ## Archived
 
