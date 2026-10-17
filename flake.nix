@@ -205,6 +205,16 @@
             fi
             touch "$out"
           '';
+
+          # Node harness over the plugin's pure logic (the exact
+          # SnippetsLogic.js the QML launcher imports): scoring tiers,
+          # slugify, the framed scan round-trip incl. TOO_LARGE, recency.
+          plugin-logic = pkgs.runCommand "dms-paste-plugin-logic"
+            { nativeBuildInputs = [ pkgs.nodejs ]; }
+            ''
+              node ${./tests/plugin-logic/run-tests.mjs} ${./plugins/snippets/SnippetsLogic.js}
+              touch "$out"
+            '';
         }
       );
     };

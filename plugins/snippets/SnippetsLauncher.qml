@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs.Services
+import "SnippetsLogic.js" as Logic
 
 // Snippets launcher plugin (PasteBot-style ⌘⇧C replacement).
 //
@@ -83,50 +84,8 @@ QtObject {
             onStreamFinished: {
                 root.lastRefreshAt = Date.now();
                 root.refreshInFlight = false;
-                const parsed = [];
-                const records = this.text.split("\x1e");
-                for (let i = 0; i < records.length; i++) {
-                    const record = records[i];
-                    if (!record || record.length === 0)
-                        continue;
-                    const sep = record.indexOf("\x1f");
-                    if (sep < 0)
-                        continue;
-                    const fileName = record.slice(0, sep);
-                    const content = record.slice(sep + 1);
-                    const oversized = content.startsWith("\x01TOO_LARGE\x01");
-                    const oversizeBytes = oversized ? (parseInt(content.slice(11), 10) || 0) : 0;
-                    const name = fileName.replace(/\.txt$/i, "");
-                    const lineCount = oversized ? 1 : content.replace(/\n+$/, "").split("\n").length;
-                    let preview;
-                    if (!oversized) {
-                        let pv = content.split("\n")[0] || "";
-                        pv = pv.trim();
-                        if (pv.length > 80)
-                            pv = pv.slice(0, 80) + "…";
-                        if (pv.length === 0)
-                            pv = content.trim().length > 0 ? "(multiline)" : "(empty)";
-                        preview = pv;
-                    } else {
-                        preview = "(too large: " + Math.round(oversizeBytes / 1024) + " KB — not listed; open the file directly)";
-                    }
-                    if (lineCount > 1)
-                        preview = preview + "  ·  " + lineCount + " lines";
-                    parsed.push({
-                        fileName: fileName,
-                        name: name,
-                        content: oversized ? "" : content,
-                        oversized: oversized,
-                        preview: preview
-                    });
-                }
-                parsed.sort(function (a, b) {
-                    const ra = root.recentFiles.indexOf(a.fileName);
-                    const rb = root.recentFiles.indexOf(b.fileName);
-                    if (ra !== -1 || rb !== -1)
-                        return (ra === -1 ? 1 : 0) - (rb === -1 ? 1 : 0) || ra - rb;
-                    return a.name.localeCompare(b.name);
-                });
+                const parsed = Logic.parseScanRecords(this.text);
+                parsed.sort(function (a, b) { return Logic.recencyCompare(a, b, root.recentFiles); });
                 root.snippets = parsed;
                 // Deliberately NO savePluginState here — see recentFiles note
                 // above (upstream state writer is broken in DMS 1.6.3).
@@ -144,31 +103,6 @@ QtObject {
     function maybeRefresh() {
         if (Date.now() - lastRefreshAt > 2000)
             refresh();
-    }
-
-    function slugify(name) {
-        let slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-        if (slug.length === 0)
-            slug = "snippet-" + Date.now();
-        return slug;
-    }
-
-    function score(snippet, lowerQuery, tokens) {
-        const lowerName = snippet.name.toLowerCase();
-        let score = 0;
-        if (lowerName.startsWith(lowerQuery))
-            score = 100;
-        else if (lowerName.includes(lowerQuery))
-            score = 70;
-        else if (snippet.content.toLowerCase().includes(lowerQuery))
-            score = 40;
-        else
-            return 0;
-        for (let i = 0; i < tokens.length; i++) {
-            if (!lowerName.includes(tokens[i]) && !snippet.content.toLowerCase().includes(tokens[i]))
-                return 0;
-        }
-        return score;
     }
 
     function getItems(query) {
@@ -190,12 +124,12 @@ QtObject {
             }
             return [{
                 name: "Save clipboard as \u201C" + name + "\u201D",
-                comment: "Writes " + expandedDir() + "/" + slugify(name) + ".txt",
+                comment: "Writes " + expandedDir() + "/" + Logic.slugify(name) + ".txt",
                 action: "save",
                 icon: "save",
                 categories: ["Snippets"],
                 _saveName: name,
-                _saveSlug: slugify(name)
+                _saveSlug: Logic.slugify(name)
             }];
         }
 
@@ -209,7 +143,7 @@ QtObject {
                 const snippet = snippets[i];
                 if (snippet.oversized)
                     continue;
-                const relevance = deleteQuery.length === 0 ? 1 : score(snippet, deleteQuery.toLowerCase(), dTokens);
+                const relevance = deleteQuery.length === 0 ? 1 : Logic.score(snippet, deleteQuery.toLowerCase(), dTokens);
                 if (relevance === 0)
                     continue;
                 dItems.push({
@@ -248,7 +182,7 @@ QtObject {
                 });
                 continue;
             }
-            const relevance = lowerQuery.length === 0 ? 1 : score(snippet, lowerQuery, tokens);
+            const relevance = lowerQuery.length === 0 ? 1 : Logic.score(snippet, lowerQuery, tokens);
             if (relevance === 0)
                 continue;
             items.push({
@@ -280,11 +214,7 @@ QtObject {
     }
 
     function trackRecent(fileName) {
-        const next = recentFiles.filter(function (f) { return f !== fileName; });
-        next.unshift(fileName);
-        if (next.length > 10)
-            next.length = 10;
-        recentFiles = next;
+        recentFiles = Logic.updatedRecents(recentFiles, fileName);
     }
 
     // PasteBot-style Enter: copy into the DMS clipboard (which also records
