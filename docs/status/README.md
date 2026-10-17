@@ -6,9 +6,10 @@ Point-in-time snapshots of project state. The living sources are [TODO_LIST.md](
 
 ## Index (unarchived)
 
-| Date       | Report                                                                                                      | Occasion                                                                               |
-| ---------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| 2026-10-17 | [Docs-health audit #3 — annotation + archive sweep](2026-10-17_09-29_docs-health-annotate-archive-sweep.md) | 198 inline verdicts; all 4 snapshots archived; dependabot documented; docs truth-fixed |
+| Date       | Report                                                                                                      | Occasion                                                                                |
+| ---------- | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| 2026-10-17 | [Docs-health audit #3 — annotation + archive sweep](2026-10-17_09-29_docs-health-annotate-archive-sweep.md) | 198 inline verdicts; all 4 snapshots archived; dependabot documented; docs truth-fixed  |
+| 2026-10-17 | [oxfmt .pragma fix + BuildFlow cache gap](2026-10-17_09-50_oxfmt-pragma-fix-buildflow-cache-gap.md)         | Session report: .oxfmtrc.json ignore shipped, oxfmt/buildflow green, BuildFlow#68 filed |
 
 ## Archived
 
