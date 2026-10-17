@@ -28,6 +28,8 @@ PasteBot-parity is the floor, not the ceiling. Ideas in rough fidelity order:
 - Edit-in-place: an action that opens the snippet file in `$EDITOR` and
   rescans on close.
 - Multiple snippet directories / profiles (work vs. personal).
+- Raw idea: expose the launcher `trigger` (`:s`) as a module option instead
+  of a plugin.json constant.
 
 ### Verification depth
 
