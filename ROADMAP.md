@@ -45,8 +45,6 @@ PasteBot-parity is the floor, not the ceiling. Ideas in rough fidelity order:
 
 ### Repo infrastructure
 
-- Release automation: a tag-push workflow that cuts the GitHub Release from
-  the CHANGELOG section.
 - CI binary cache (attic or similar) if run times ever grow past trivial.
 - Scheduled flake.lock refresh cadence (monthly?) with a green-check gate.
 
