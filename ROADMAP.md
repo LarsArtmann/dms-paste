@@ -33,10 +33,12 @@ PasteBot-parity is the floor, not the ceiling. Ideas in rough fidelity order:
 
 ### Verification depth
 
-- A QML-level contract harness against fixtures (the way `patch-contract`
-  exercises the patcher) for the plugin's pure functions (scoring, framing
-  round-trip, slugify) — they are plain JS and testable outside a live DMS.
-- Cross-arch (`aarch64-linux`) check runs in CI once CI exists.
+- A QML-level harness that loads the plugin in a real Quickshell context
+  (beyond the current node + parse-level checks) — needs fixture shell
+  plumbing that does not exist yet.
+- Cross-arch (`aarch64-linux`) check runs in CI — deferred while every
+  check is an eval/text contract; revisit the moment an
+  architecture-dependent check appears.
 
 ## Open questions
 

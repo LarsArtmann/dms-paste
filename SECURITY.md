@@ -32,9 +32,10 @@ Please do **not** open public issues for security problems. Report privately ins
 
 ## Security Practices
 
-- All changes are code-reviewed before merge
-- Automated security scanning runs in CI
-- Dependencies are kept up to date
+- Every push and PR must pass the full check suite (`nix flake check`) in CI (SHA-pinned actions) before it counts as green
+- Snippet files are written chmod 0600 (clipboard content can carry secrets)
+- Single-maintainer repo: no PR review requirement; CI is the merge gate
+- No dedicated dependency/security scanner yet — nixpkgs moves with `nixpkgs-unstable` and is refreshed on flake.lock bumps
 
 ---
 

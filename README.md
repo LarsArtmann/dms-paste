@@ -13,7 +13,7 @@ Extracted from [SystemNix](https://github.com/LarsArtmann/SystemNix) (2026-10-16
    - `:s > name` — save the live clipboard as a new snippet (owner-only perms, 0600)
    - `:s -name` — list matches, Enter moves one to the desktop trash (never `rm`)
    - Files >64 KB are listed as inert "too large" hints, never loaded into QML
-2. **Clipboard-history parity settings** — Enter/click on a history entry pastes it directly (DMS synthesizes Ctrl+V over the compositor's `zwp_virtual_keyboard_manager_v1`; verified against source 2026-10-17: [DMS `core/internal/clipboard/pastekey.go`](https://github.com/AvengeMedia/DankMaterialShell/blob/main/core/internal/clipboard/pastekey.go) + [niri `VirtualKeyboardManagerState`](https://github.com/YaLTeR/niri/blob/main/src/niri.rs) — re-verify on DMS/niri major releases), `maxHistory` raised to 100k, minimal per-row chrome
+2. **Clipboard-history parity settings** — Enter/click on a history entry pastes it directly (DMS synthesizes Ctrl+V over the compositor's `zwp_virtual_keyboard_manager_v1`; verified against source 2026-10-17, links pinned to commit: [DMS `core/internal/clipboard/pastekey.go`](https://github.com/AvengeMedia/DankMaterialShell/blob/3674d0f4807dc689e8e10ade22142b0f92da2495/core/internal/clipboard/pastekey.go#L20-L64) + [niri `VirtualKeyboardManagerState`](https://github.com/YaLTeR/niri/blob/45739bc072f9875a674d335ae724f10d3b35c665/src/niri.rs#L2577) — re-verify on DMS/niri major releases), `maxHistory` raised to 100k, minimal per-row chrome
 3. **Clipboard-modal density patches** (`lib.patchDms`) — no per-row "Text" captions, two preview lines, 880x620 modal, denser rows; build-time grep guards fail the build when upstream QML drifts
 
 ## Requirements
@@ -61,10 +61,12 @@ An honest feature-by-feature status lives in [FEATURES.md](FEATURES.md); directi
 ## Development
 
 ```bash
-nix develop      # pinned dprint on PATH (the non-nix formatter the checks use)
-nix flake check  # module-contract + patch-contract (real build of the drift guards) + formatting + dprint
+nix develop      # pinned dprint + nodejs + qmllint on PATH (what the checks use)
+nix flake check  # module-contract + patch-contract (real build of the drift guards) + formatting + dprint + features-counts + plugin-logic + qml-preflight
 nix fmt          # nix files (treefmt)
 dprint fmt       # json/yaml/markdown/dockerfile (from the devShell)
+node tests/plugin-logic/run-tests.mjs plugins/snippets/SnippetsLogic.js  # plugin logic harness
+tests/qml-preflight.sh plugins/snippets                                        # QML parse preflight
 ```
 
-CI runs `nix flake check` on every push and pull request.
+CI runs `nix flake check` on every push and pull request (SHA-pinned actions, superseded runs cancelled, runner pinned to `ubuntu-24.04`).
