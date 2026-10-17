@@ -39,12 +39,23 @@ awk '
     if (n < 1) return 0
     return lineAt(path, n) ~ /[^[:space:]]/ ? 1 : 0
   }
-  function symbolNear(path, line, sym,  i, hit) {
-    for (i = line - 5; i <= line + 5; i++) {
+  function symbolNear(path, line, last, sym,  i, hit) {
+    for (i = line - 5; i <= last + 5; i++) {
       if (i < 1) continue
       if (index(lineAt(path, i), sym) > 0) { hit = 1; break }
     }
     return hit ? 1 : 0
+  }
+  function claimIn(text,   span, s, arr) {
+    # A symbol claim is ` (`token` …)` directly after an anchor; the token
+    # must be a bare identifier (dots/hyphens allowed) for asserting.
+    if (!match(text, /^`?[[:space:]]*\(`[^`]+/))
+      return ""
+    span = substr(text, 1, RLENGTH)
+    sub(/^`?[[:space:]]*\(`/, "", span)
+    sub(/^`/, "", span)
+    split(span, arr, /`/)
+    return arr[1] ~ /^[A-Za-z_][A-Za-z0-9_.-]*$/ ? arr[1] : ""
   }
   /^\|[[:space:]]*[0-9]+[[:space:]]*\|/ {
     row = $2
@@ -81,10 +92,12 @@ awk '
         if (end < line) fail(row, cur " range " line "-" end " is inverted")
         if (!nonblank(cur, end))
           fail(row, cur " range end " end " is blank or out of bounds (file has " filelines(cur) " lines)")
-      } else if (match(after, /^`?[[:space:]]*\(`[A-Za-z_][A-Za-z0-9_]*`\)/)) {
-        sym = substr(after, 1, RLENGTH)
-        gsub(/[^A-Za-z0-9_]/, "", sym)
-        if (!symbolNear(cur, line, sym))
+        sym = claimIn(substr(after, RSTART + RLENGTH))
+        if (sym != "" && !symbolNear(cur, line, end, sym))
+          fail(row, "symbol `" sym "` not found within ±5 lines of " cur ":" line "-" end)
+      } else {
+        sym = claimIn(after)
+        if (sym != "" && !symbolNear(cur, line, line, sym))
           fail(row, "symbol `" sym "` not found within ±5 lines of " cur ":" line)
       }
       work = after
