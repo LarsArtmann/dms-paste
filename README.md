@@ -4,7 +4,7 @@
 
 PasteBot-style paste workflow for [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) (Quickshell) on NixOS: clipboard history that pastes directly into the focused window, a denser/cleaner clipboard modal, and a snippets launcher — all declarative, all composable.
 
-Extracted from [SystemNix](https://github.com/LarsArtmann/SystemNix) (2026-10-16) where it was built as a [PasteBot](https://pastebot.app) (macOS) replacement to unblock a full NixOS switch.
+Extracted from [SystemNix](https://github.com/LarsArtmann/SystemNix) (2026-10-16) where it was built as a [PasteBot](https://pastebot.com) (macOS) replacement to unblock a full NixOS switch.
 
 ## What you get
 

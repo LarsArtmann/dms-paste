@@ -18,6 +18,7 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/); version
 
 - Tagged `v1.2.0` (2026-10-17) on the release-prep commit; published the GitHub Release for [`v1.2.0`](https://github.com/LarsArtmann/dms-paste/releases/tag/v1.2.0) (notes from the CHANGELOG section plus a tag-pinned how-to-consume block). AGENTS release ritual amended with what the run taught (tag the release-prep commit, not HEAD; green check on exactly that commit).
 - CI concurrency cancellation verified live for the first time: pushing the SECURITY-row commit while the release-prep run (`39016361333`) was in-progress cancelled it via the `check-<ref>` group — observed, no longer assumed.
+- README: the PasteBot reference linked the wrong domain (`pastebot.app`, the source of the lychee TLS finding) — now `https://pastebot.com`, Tapbots' live official site (resolved 2026-10-17).
 
 ## 1.2.0 (2026-10-17)
 

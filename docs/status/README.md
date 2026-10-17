@@ -8,6 +8,7 @@ Point-in-time snapshots of project state. The living sources are [TODO_LIST.md](
 
 | Date       | Report                                                                                                      | Occasion                                                                                                      |
 | ---------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| 2026-10-17 | [Cycle 2 self-review](2026-10-17_10-40_cycle2-self-review-status.md)                                        | v1.2.0 + gates shipped; 8 honest fuckups; human handoffs listed                                               |
 | 2026-10-17 | [Pareto Cycle 2 execution sweep](2026-10-17_10-35_pareto-cycle2-execution-sweep.md)                         | v1.2.0 released; anchors/sentence/fixtures gates; fuzz+JSDoc; zero-gap consumer eval; release automation live |
 | 2026-10-17 | [Docs-health audit #3 — annotation + archive sweep](2026-10-17_09-29_docs-health-annotate-archive-sweep.md) | 198 inline verdicts; all 4 snapshots archived; dependabot documented; docs truth-fixed                        |
 | 2026-10-17 | [oxfmt .pragma fix + BuildFlow cache gap](2026-10-17_09-50_oxfmt-pragma-fix-buildflow-cache-gap.md)         | Session report: .oxfmtrc.json ignore shipped, oxfmt/buildflow green, BuildFlow#68 filed                       |
