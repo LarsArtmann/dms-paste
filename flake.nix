@@ -241,6 +241,28 @@
                 fi
                 touch "$out"
               '';
+
+          # FEATURES.md Evidence anchors resolve: every path:line citation
+          # (incl. :line continuations and a-b ranges) must cite an existing
+          # file and a non-blank line, backticked symbol claims must occur
+          # within ±5 lines of the cite, and every feature row must carry at
+          # least one line anchor. Two doctored copies prove the legs bite.
+          anchors = pkgs.runCommand "dms-paste-anchors" { } ''
+            bash ${./tests/anchors.sh} ${self}/FEATURES.md ${self}
+            bad_line="$(mktemp -d)/FEATURES.md"
+            sed 's/SnippetsLogic\.js:18/SnippetsLogic.js:9988/' ${self}/FEATURES.md > "$bad_line"
+            if bash ${./tests/anchors.sh} "$bad_line" ${self} >/dev/null 2>&1; then
+              echo "FAIL: anchors gate accepted a bogus line number (self-test leg broken?)"
+              exit 1
+            fi
+            bad_sym="$(mktemp -d)/FEATURES.md"
+            sed 's/getPasteArgs/getPasteArgz/g' ${self}/FEATURES.md > "$bad_sym"
+            if bash ${./tests/anchors.sh} "$bad_sym" ${self} >/dev/null 2>&1; then
+              echo "FAIL: anchors gate accepted a bogus symbol claim (self-test leg broken?)"
+              exit 1
+            fi
+            touch "$out"
+          '';
         }
       );
     };
