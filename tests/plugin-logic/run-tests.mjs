@@ -13,7 +13,8 @@ if (!path) {
 const source = readFileSync(path, "utf8").replace(/^\s*\.pragma\s+library\s*$/m, "");
 const context = vm.createContext({});
 vm.runInContext(
-  source + "\n;globalThis.__exports = { slugify, score, parseScanRecords, recencyCompare, updatedRecents };",
+  source +
+    "\n;globalThis.__exports = { slugify, score, parseScanRecords, recencyCompare, updatedRecents };",
   context,
 );
 const { slugify, score, parseScanRecords, recencyCompare, updatedRecents } = context.__exports;
@@ -37,15 +38,27 @@ eq("score: name prefix wins", score(snippet("Standup update", "body"), "stan", [
 eq("score: name substring", score(snippet("My standup", "body"), "stan", []), 70);
 eq("score: content substring", score(snippet("other", "standup text"), "stan", []), 40);
 eq("score: miss", score(snippet("other", "body"), "zzz", []), 0);
-eq("score: token veto beats a name-prefix hit", score(snippet("standup", "body"), "stan", ["miss"]), 0);
-eq("score: all tokens present keeps the tier", score(snippet("standup", "monday body"), "stan", ["monday", "body"]), 100);
+eq(
+  "score: token veto beats a name-prefix hit",
+  score(snippet("standup", "body"), "stan", ["miss"]),
+  0,
+);
+eq(
+  "score: all tokens present keeps the tier",
+  score(snippet("standup", "monday body"), "stan", ["monday", "body"]),
+  100,
+);
 
 // --- slugify -------------------------------------------------------------
 eq("slugify: lowercases and joins", slugify("Hello World"), "hello-world");
 eq("slugify: collapses runs, strips edges", slugify("--a !! b--"), "a-b");
 eq("slugify: non-ascii letters become separators", slugify("Ünïcödé!"), "n-c-d");
 const fallback = slugify("日本語!");
-check("slugify: no ascii alphanumerics falls back to timestamped slug", /^snippet-\d+$/.test(fallback), fallback);
+check(
+  "slugify: no ascii alphanumerics falls back to timestamped slug",
+  /^snippet-\d+$/.test(fallback),
+  fallback,
+);
 
 // --- parseScanRecords: the framed round-trip -----------------------------
 // Mirrors the shell: printf '\036%s\037' name; cat file  (plus \n per record)
@@ -73,7 +86,11 @@ eq("parse: multiline content intact", multi.content, "line one\nline two\n");
 const big = parsed[2];
 eq("parse: oversized flag", big.oversized, true);
 eq("parse: oversized content never loaded", big.content, "");
-eq("parse: oversized preview with KB size", big.preview, "(too large: 64 KB — not listed; open the file directly)");
+eq(
+  "parse: oversized preview with KB size",
+  big.preview,
+  "(too large: 64 KB — not listed; open the file directly)",
+);
 
 const empty = parsed[3];
 eq("parse: empty file preview", empty.preview, "(empty)");
@@ -82,20 +99,36 @@ const blankFirst = parsed[4];
 eq("parse: blank-first-line preview", blankFirst.preview, "(multiline)  ·  3 lines");
 
 const longLine = parseScanRecords(frame("long.txt", "x".repeat(90) + "\n"))[0];
-check("parse: preview truncates at 80 + ellipsis", longLine.preview.length === 81 && longLine.preview.endsWith("…"), longLine.preview.length);
+check(
+  "parse: preview truncates at 80 + ellipsis",
+  longLine.preview.length === 81 && longLine.preview.endsWith("…"),
+  longLine.preview.length,
+);
 
 // --- recencyCompare -------------------------------------------------------
 const A = { fileName: "a.txt", name: "a" };
 const B = { fileName: "b.txt", name: "b" };
 const Z = { fileName: "z.txt", name: "z" };
 const recents = ["b.txt", "a.txt"];
-check("recency: both recent, index order wins", recencyCompare(B, A, recents) < 0 && recencyCompare(A, B, recents) > 0);
-check("recency: recent sorts before never-used", recencyCompare(A, Z, recents) < 0 && recencyCompare(Z, A, recents) > 0);
-check("recency: neither recent falls back to alpha", recencyCompare(Z, A, []) > 0 && recencyCompare(A, Z, []) < 0);
+check(
+  "recency: both recent, index order wins",
+  recencyCompare(B, A, recents) < 0 && recencyCompare(A, B, recents) > 0,
+);
+check(
+  "recency: recent sorts before never-used",
+  recencyCompare(A, Z, recents) < 0 && recencyCompare(Z, A, recents) > 0,
+);
+check(
+  "recency: neither recent falls back to alpha",
+  recencyCompare(Z, A, []) > 0 && recencyCompare(A, Z, []) < 0,
+);
 
 // --- updatedRecents -------------------------------------------------------
 eq("recents: prepend", updatedRecents(["a.txt"], "b.txt"), ["b.txt", "a.txt"]);
-eq("recents: re-use moves to front, deduped", updatedRecents(["a.txt", "b.txt"], "a.txt"), ["a.txt", "b.txt"]);
+eq("recents: re-use moves to front, deduped", updatedRecents(["a.txt", "b.txt"], "a.txt"), [
+  "a.txt",
+  "b.txt",
+]);
 const ten = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
 const capped = updatedRecents(ten, "new");
 eq("recents: capped at 10", capped.length, 10);
