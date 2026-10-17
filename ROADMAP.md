@@ -35,10 +35,19 @@ PasteBot-parity is the floor, not the ceiling. Ideas in rough fidelity order:
 
 - A QML-level harness that loads the plugin in a real Quickshell context
   (beyond the current node + parse-level checks) — needs fixture shell
-  plumbing that does not exist yet.
+  plumbing that does not exist yet. Stepping stone: generate/import
+  Quickshell qmltypes so qmllint can do real type checking instead of
+  parse-only.
 - Cross-arch (`aarch64-linux`) check runs in CI — deferred while every
   check is an eval/text contract; revisit the moment an
   architecture-dependent check appears.
+
+### Repo infrastructure
+
+- Release automation: a tag-push workflow that cuts the GitHub Release from
+  the CHANGELOG section.
+- CI binary cache (attic or similar) if run times ever grow past trivial.
+- Scheduled flake.lock refresh cadence (monthly?) with a green-check gate.
 
 ## Open questions
 
