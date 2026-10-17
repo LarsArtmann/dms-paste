@@ -13,13 +13,13 @@ Extracted from [SystemNix](https://github.com/LarsArtmann/SystemNix) (2026-10-16
    - `:s > name` — save the live clipboard as a new snippet (owner-only perms, 0600)
    - `:s -name` — list matches, Enter moves one to the desktop trash (never `rm`)
    - Files >64 KB are listed as inert "too large" hints, never loaded into QML
-2. **Clipboard-history parity settings** — Enter/click on a history entry pastes it directly (DMS synthesizes Ctrl+V over the compositor's `zwp_virtual_keyboard_manager_v1`; works on niri), `maxHistory` raised to 100k, minimal per-row chrome
+2. **Clipboard-history parity settings** — Enter/click on a history entry pastes it directly (DMS synthesizes Ctrl+V over the compositor's `zwp_virtual_keyboard_manager_v1`; verified against source 2026-10-17: [DMS `core/internal/clipboard/pastekey.go`](https://github.com/AvengeMedia/DankMaterialShell/blob/main/core/internal/clipboard/pastekey.go) + [niri `VirtualKeyboardManagerState`](https://github.com/YaLTeR/niri/blob/main/src/niri.rs) — re-verify on DMS/niri major releases), `maxHistory` raised to 100k, minimal per-row chrome
 3. **Clipboard-modal density patches** (`lib.patchDms`) — no per-row "Text" captions, two preview lines, 880x620 modal, denser rows; build-time grep guards fail the build when upstream QML drifts
 
 ## Requirements
 
 - DankMaterialShell's home-manager module imported in the same closure (this flake only assigns into `programs.dank-material-shell.*` and fails eval loudly without it)
-- A compositor supporting the virtual-keyboard protocol (niri)
+- A compositor exposing `zwp_virtual_keyboard_manager_v1` (niri does — see the source links above)
 - `trash` on `$PATH` (delete mode)
 
 ## Usage
@@ -61,6 +61,10 @@ An honest feature-by-feature status lives in [FEATURES.md](FEATURES.md); directi
 ## Development
 
 ```bash
-nix flake check   # module-contract + patch-contract (real build of the drift guards) + formatting
-nix fmt
+nix develop      # pinned dprint on PATH (the non-nix formatter the checks use)
+nix flake check  # module-contract + patch-contract (real build of the drift guards) + formatting + dprint
+nix fmt          # nix files (treefmt)
+dprint fmt       # json/yaml/markdown/dockerfile (from the devShell)
 ```
+
+CI runs `nix flake check` on every push and pull request.

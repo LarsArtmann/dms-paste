@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project are documented here.
-This project adheres to [Keep a Changelog](https://keepachangelog.com/); versions continue the SystemNix snippets-plugin numbering (no git tags yet — the flake is consumed by revision).
+This project adheres to [Keep a Changelog](https://keepachangelog.com/); versions continue the SystemNix snippets-plugin numbering. Tagged in git since `v1.1.0` (2026-10-17, on the first CI-verified commit); earlier revisions were consumed by flake revision only.
 
 ## 1.1.0 (2026-10-16)
 

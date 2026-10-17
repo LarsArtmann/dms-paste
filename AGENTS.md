@@ -19,7 +19,7 @@ PasteBot-style paste workflow for DankMaterialShell (Quickshell): snippets launc
 
 ## Verification
 
-`nix flake check` — `module-contract` (eval), `patch-contract` (real build exercising every drift guard), `formatting`. Nix files: this repo's own treefmt (`nix fmt`), never ad-hoc nixfmt/statix/alejandra. JSON/YAML/Markdown/Dockerfile: `dprint.json` (auto-generated config — don't hand-curate it).
+CI runs `nix flake check` on every push/PR (`.github/workflows/check.yml`, x86_64-linux). Locally the same: `nix flake check` — `module-contract` (eval), `patch-contract` (real build exercising every drift guard), `formatting` (treefmt/nix), `dprint` (json/yaml/markdown/dockerfile, hermetic via store-path plugins). Nix files: this repo's own treefmt (`nix fmt`), never ad-hoc nixfmt/statix/alejandra. JSON/YAML/Markdown/Dockerfile: `dprint` (pinned in the devShell — `nix develop` — and in the check; plugin hashes live in `flake.nix` `dprintCheck`, add one there when bumping a plugin in `dprint.json`). `dprint.json` is auto-generated config — don't hand-curate it.
 
 ## Current work
 
