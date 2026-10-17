@@ -5,6 +5,8 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/); version
 
 ## Unreleased
 
+## 1.2.0 (2026-10-17)
+
 ### Added
 
 - CI: `nix flake check` on every push and PR (`.github/workflows/check.yml`, x86_64-linux; aarch64 deferred — the checks are eval/text contracts, not architecture-dependent). First run green 2026-10-17.
