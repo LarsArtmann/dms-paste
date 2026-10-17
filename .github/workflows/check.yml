@@ -8,13 +8,24 @@ on:
 
 permissions: {}
 
+# Superseded runs of the same ref are cancelled: the check is a single
+# hermetic `nix flake check`, so an older run carries no information once
+# a newer commit exists.
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   flake-check:
     name: nix flake check (x86_64-linux)
-    runs-on: ubuntu-latest
+    # Pinned ahead of the ubuntu-latest → Ubuntu 26.04 rollout (announced
+    # for 2026-10-19): the checks are hermetic eval/text contracts, so any
+    # bootable runner works — stability beats freshness here. Re-evaluate
+    # when 24.04 approaches retirement (standard support to 2029).
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23

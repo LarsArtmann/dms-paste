@@ -131,8 +131,14 @@
         default = pkgs.mkShell {
           # Same dprint the `dprint` check builds with, so `nix develop`
           # gives contributors the pinned non-nix formatter (treefmt stays
-          # available as `nix fmt` straight from the flake).
-          packages = [ pkgs.dprint ];
+          # available as `nix fmt` straight from the flake). nodejs runs
+          # the plugin-logic harness; qtdeclarative provides qmllint for
+          # the QML syntax preflight (tests/qml-preflight.sh).
+          packages = [
+            pkgs.dprint
+            pkgs.nodejs
+            pkgs.qt6.qtdeclarative
+          ];
         };
       });
 
@@ -198,9 +204,15 @@
           features-counts = pkgs.runCommand "dms-paste-features-counts" { } ''
             bash ${./tests/features-counts.sh} ${self}/FEATURES.md
             doctored="$(mktemp -d)/FEATURES.md"
-            sed 's/— 12 FULLY_FUNCTIONAL/— 11 FULLY_FUNCTIONAL/' ${self}/FEATURES.md > "$doctored"
+            # Off-by-one the declared total so the doctoring never depends
+            # on the literal counts text staying in sync with this check.
+            awk '/^Counts \(/ && !done {
+              if (match($0, /: [0-9]+/))
+                $0 = substr($0, 1, RSTART + 1) (substr($0, RSTART + 2, RLENGTH - 2) + 1) substr($0, RSTART + RLENGTH)
+              done = 1
+            } { print }' ${self}/FEATURES.md > "$doctored"
             if bash ${./tests/features-counts.sh} "$doctored" >/dev/null 2>&1; then
-              echo "FAIL: counts gate accepted a doctored summary (sed leg broken?)"
+              echo "FAIL: counts gate accepted a doctored summary (self-test leg broken?)"
               exit 1
             fi
             touch "$out"
@@ -213,6 +225,22 @@
             node ${./tests/plugin-logic/run-tests.mjs} ${./plugins/snippets/SnippetsLogic.js}
             touch "$out"
           '';
+
+          # qmllint parse gate over every plugin .qml (syntax errors fail
+          # the build; type resolution is disabled — see the script header).
+          qml-preflight =
+            pkgs.runCommand "dms-paste-qml-preflight" { nativeBuildInputs = [ pkgs.qt6.qtdeclarative ]; }
+              ''
+                bash ${./tests/qml-preflight.sh} ${./plugins/snippets}
+                # Self-test: a parse-broken file must fail the same script.
+                broken="$(mktemp -d)"
+                printf 'Item {\n  broken here\n' > "$broken/Broken.qml"
+                if bash ${./tests/qml-preflight.sh} "$broken" >/dev/null 2>&1; then
+                  echo "FAIL: qml preflight accepted a parse-broken file (self-test leg broken?)"
+                  exit 1
+                fi
+                touch "$out"
+              '';
         }
       );
     };
