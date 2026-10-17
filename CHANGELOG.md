@@ -5,6 +5,10 @@ This project adheres to [Keep a Changelog](https://keepachangelog.com/); version
 
 ## Unreleased
 
+### Added
+
+- `checks.anchors`: the FEATURES.md Evidence column is mechanically verified — every `path:line` citation (incl. `:line` continuations and `a`-`b` ranges) must resolve to an existing file and a non-blank line, backticked symbol claims must occur within ±5 lines of the cite, and every feature row must carry at least one line anchor (`tests/anchors.sh`). Two doctored-copy self-tests prove the line-bounds and symbol legs both bite; the first run caught rows 12/13/15 citing files without line anchors (now anchored). Doc-anchor rot can no longer ship silently.
+
 ### Changed
 
 - Tagged `v1.2.0` (2026-10-17) on the release-prep commit; published the GitHub Release for [`v1.2.0`](https://github.com/LarsArtmann/dms-paste/releases/tag/v1.2.0) (notes from the CHANGELOG section plus a tag-pinned how-to-consume block). AGENTS release ritual amended with what the run taught (tag the release-prep commit, not HEAD; green check on exactly that commit).
